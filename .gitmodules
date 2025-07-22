@@ -1,0 +1,6 @@
+[submodule "lvgl/lvgl"]
+	path = lvgl/lvgl
+	url = https://github.com/FASTSHIFT/lvgl.git
+[submodule "gpu-vglite"]
+	path = gpu-vglite
+	url = https://github.com/FASTSHIFT/gpu-vglite.git
