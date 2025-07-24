@@ -311,10 +311,6 @@ static void DEMO_FlushDisplay(lv_display_t* disp, const lv_area_t* area, uint8_t
     g_dc.ops->setFrameBuffer(&g_dc, 0, (void*)color_p);
 
     DEMO_WaitBufferSwitchOff();
-
-    /* IMPORTANT!!!
-     * Inform the graphics library that you are ready with the flushing*/
-    lv_display_flush_ready(disp);
 #endif /* DEMO_USE_ROTATE */
 }
 #endif
@@ -322,10 +318,12 @@ static void DEMO_FlushDisplay(lv_display_t* disp, const lv_area_t* area, uint8_t
 static void disp_flush_cb(lv_display_t* disp, const lv_area_t* area, uint8_t* color_p)
 {
 #ifndef DISABLE_DISPLAY
-    DEMO_FlushDisplay(disp, area, color_p);
-#else
-    lv_display_flush_ready(disp);
+    /* Skip the non-last flush */
+    if (lv_display_flush_is_last(disp)) {
+        DEMO_FlushDisplay(disp, area, color_p);
+    }
 #endif
+    lv_display_flush_ready(disp);
 }
 
 void gpu_init(void)
@@ -375,6 +373,10 @@ void lv_port_disp_init(void)
     lv_display_set_draw_buffers(disp, &draw_buf_1, &draw_buf_2);
     lv_display_set_color_format(disp, color_format);
     lv_display_set_render_mode(disp, LV_DISPLAY_RENDER_MODE_DIRECT);
+
+#if LV_USE_DRAW_VGLITE
+    gpu_init();
+#endif
 
 #ifndef DISABLE_DISPLAY
     status_t status;

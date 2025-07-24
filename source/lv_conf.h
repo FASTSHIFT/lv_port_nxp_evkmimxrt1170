@@ -135,7 +135,7 @@
  * Requirements:
  * - `LV_USE_MATRIX = 1`.
  * - Rendering engine needs to support 3x3 matrix transformations. */
-#define LV_DRAW_TRANSFORM_USE_MATRIX            1
+#define LV_DRAW_TRANSFORM_USE_MATRIX            0
 
 /* If a widget has `style_opa < 255` (not `bg_opa`, `text_opa` etc) or not NORMAL blend mode
  * it is buffered into a "simple" layer before rendering. The widget can be buffered in smaller chunks.
@@ -251,7 +251,7 @@
 #endif
 
 /** Use NXP's VG-Lite GPU on iMX RTxxx platforms. */
-#define LV_USE_DRAW_VGLITE 0
+#define LV_USE_DRAW_VGLITE 1
 
 #if LV_USE_DRAW_VGLITE
     /** Enable blit quality degradation workaround recommended for screen's dimension > 352 pixels. */
@@ -317,7 +317,7 @@
 #define LV_USE_DRAW_SDL 0
 
 /** Use VG-Lite GPU. */
-#define LV_USE_DRAW_VG_LITE 1
+#define LV_USE_DRAW_VG_LITE !LV_USE_DRAW_VGLITE
 
 #if LV_USE_DRAW_VG_LITE
     /** Enable VG-Lite custom external 'gpu_init()' function */
@@ -975,7 +975,7 @@
 
 /** Enable Vector Graphic APIs
  *  - Requires `LV_USE_MATRIX = 1` */
-#define LV_USE_VECTOR_GRAPHIC  1
+#define LV_USE_VECTOR_GRAPHIC  LV_USE_DRAW_VG_LITE
 
 /** Enable ThorVG (vector graphics library) from the src/libs folder */
 #define LV_USE_THORVG_INTERNAL 0

@@ -51,6 +51,11 @@ static void AppTask(void *param)
     lv_port_profiler_init();
 
     lv_demo_widgets();
+    // lv_demo_benchmark();
+
+    // lv_obj_t* obj = lv_obj_create(lv_scr_act());
+    // lv_obj_set_style_radius(obj, LV_RADIUS_CIRCLE, 0);
+    // lv_obj_center(obj);
 
     for (;;)
     {

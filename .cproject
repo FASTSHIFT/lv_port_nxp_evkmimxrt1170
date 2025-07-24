@@ -121,7 +121,7 @@
 								<option id="com.crt.advproject.gcc.thumb.463223826" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.gcc.arch.1210032939" name="Architecture" superClass="com.crt.advproject.gcc.arch" useByScannerDiscovery="true" value="com.crt.advproject.gcc.target.cm7" valueType="enumerated"/>
 								<option id="com.crt.advproject.c.misc.dialect.1995362125" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.dialect.flags.317750275" name="Other dialect flags" superClass="gnu.c.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-DGCID_REV_CID=gc355/0x0_1216" valueType="string"/>
+								<option id="gnu.c.compiler.option.dialect.flags.317750275" name="Other dialect flags" superClass="gnu.c.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-DGCID_REV_CID=gc355/0x0_1216 -DDEMO_CleanInvalidateCacheByAddr=SCB_CleanInvalidateDCache_by_Addr" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.nostdinc.1068666550" name="Do not search system directories (-nostdinc)" superClass="gnu.c.compiler.option.preprocessor.nostdinc" useByScannerDiscovery="false"/>
 								<option id="gnu.c.compiler.option.preprocessor.preprocess.933652640" name="Preprocess only (-E)" superClass="gnu.c.compiler.option.preprocessor.preprocess" useByScannerDiscovery="false"/>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.248270682" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol" useByScannerDiscovery="false"/>
@@ -461,7 +461,7 @@
 								<option id="com.crt.advproject.gcc.thumb.1853005168" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.gcc.arch.1465758474" name="Architecture" superClass="com.crt.advproject.gcc.arch" useByScannerDiscovery="true" value="com.crt.advproject.gcc.target.cm7" valueType="enumerated"/>
 								<option id="com.crt.advproject.c.misc.dialect.1129171384" name="Language standard" superClass="com.crt.advproject.c.misc.dialect" useByScannerDiscovery="true" value="com.crt.advproject.misc.dialect.gnu99" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.dialect.flags.1738768045" name="Other dialect flags" superClass="gnu.c.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-DGCID_REV_CID=gc355/0x0_1216" valueType="string"/>
+								<option id="gnu.c.compiler.option.dialect.flags.1738768045" name="Other dialect flags" superClass="gnu.c.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-DGCID_REV_CID=gc355/0x0_1216 -DDEMO_CleanInvalidateCacheByAddr=SCB_CleanInvalidateDCache_by_Addr" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.nostdinc.1811753429" name="Do not search system directories (-nostdinc)" superClass="gnu.c.compiler.option.preprocessor.nostdinc" useByScannerDiscovery="false"/>
 								<option id="gnu.c.compiler.option.preprocessor.preprocess.210898309" name="Preprocess only (-E)" superClass="gnu.c.compiler.option.preprocessor.preprocess" useByScannerDiscovery="false"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.preprocessor.def.symbols.602508454" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
@@ -684,7 +684,7 @@
 								<option id="com.crt.advproject.link.flashconfigenable.1132282740" name="Enable automatic placement of Flash Configuration field in image" superClass="com.crt.advproject.link.flashconfigenable" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.link.ecrp.472401819" name="Enhanced CRP" superClass="com.crt.advproject.link.ecrp"/>
 								<option id="com.crt.advproject.link.gcc.hdrlib.891718664" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
-								<option id="com.crt.advproject.link.gcc.nanofloat.826423636" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat"/>
+								<option id="com.crt.advproject.link.gcc.nanofloat.826423636" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.scanf.2071267999" name="Enable scanf float " superClass="com.crt.advproject.link.gcc.nanofloat.scanf"/>
 								<option id="com.crt.advproject.link.toram.1099570781" name="Link application to RAM" superClass="com.crt.advproject.link.toram"/>
 								<option id="com.crt.advproject.link.stackOffset.1073512055" name="Stack offset" superClass="com.crt.advproject.link.stackOffset"/>
