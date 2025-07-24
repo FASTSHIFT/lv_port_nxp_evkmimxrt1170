@@ -324,7 +324,7 @@
     #define LV_VG_LITE_USE_GPU_INIT 1
 
     /** Enable VG-Lite assert. */
-    #define LV_VG_LITE_USE_ASSERT 1
+    #define LV_VG_LITE_USE_ASSERT 0
 
     /** VG-Lite flush commit trigger threshold. GPU will try to batch these many draw tasks. */
     #define LV_VG_LITE_FLUSH_MAX_COUNT 8
@@ -1048,7 +1048,7 @@
 #endif /*LV_USE_SYSMON*/
 
 /** 1: Enable runtime performance profiler */
-#define LV_USE_PROFILER 1
+#define LV_USE_PROFILER 0
 #if LV_USE_PROFILER
     /** 1: Enable the built-in profiler */
     #define LV_USE_PROFILER_BUILTIN 1

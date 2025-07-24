@@ -50,7 +50,7 @@ static void AppTask(void *param)
     lv_port_indev_init();
     lv_port_profiler_init();
 
-    lv_demo_benchmark();
+    lv_demo_widgets();
 
     for (;;)
     {
@@ -81,11 +81,13 @@ int main(void)
     SRC_AssertSliceSoftwareReset(SRC, kSRC_DisplaySlice);
 
     BOARD_InitLpuartPins();
-    // BOARD_InitMipiPanelPins();
-    // BOARD_MIPIPanelTouch_I2C_Init();
+#ifndef DISABLE_DISPLAY
+    BOARD_InitMipiPanelPins();
+    BOARD_MIPIPanelTouch_I2C_Init();
+#endif
     BOARD_InitDebugConsole();
 
-    stat = xTaskCreate(AppTask, "lvgl", configMINIMAL_STACK_SIZE + 2048, NULL, tskIDLE_PRIORITY + 2, NULL);
+    stat = xTaskCreate(AppTask, "lvgl", configMINIMAL_STACK_SIZE + 4096, NULL, tskIDLE_PRIORITY + 2, NULL);
 
     if (pdPASS != stat)
     {

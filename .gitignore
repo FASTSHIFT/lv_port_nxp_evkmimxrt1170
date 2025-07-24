@@ -45,3 +45,4 @@
 /Release
 *.launch
 *.log
+/.vscode

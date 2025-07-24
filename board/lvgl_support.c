@@ -20,7 +20,7 @@
 
 #include "fsl_gt911.h"
 
-#if 1 //LV_USE_GPU_NXP_VG_LITE
+#if 1 // LV_USE_GPU_NXP_VG_LITE
 #include "vg_lite.h"
 #include "vglite_support.h"
 #endif
@@ -87,15 +87,8 @@
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-// static void DEMO_FlushDisplay(lv_disp_drv_t* disp_drv, const lv_area_t* area, lv_color_t* color_p);
-
-#if (LV_USE_GPU_NXP_VG_LITE || LV_USE_GPU_NXP_PXP)
-static void DEMO_CleanInvalidateCache(lv_disp_drv_t* disp_drv);
-#endif
 
 static void DEMO_InitTouch(void);
-
-// static void DEMO_ReadTouch(lv_indev_drv_t* drv, lv_indev_data_t* data);
 
 static void DEMO_BufferSwitchOffCallback(void* param, void* switchOffBuffer);
 
@@ -212,176 +205,9 @@ void lv_port_pre_init(void)
 {
 }
 
-static void disp_flush_cb(lv_display_t* disp, const lv_area_t* area, uint8_t* color_p)
-{
-    lv_disp_flush_ready(disp);
-}
+#ifndef DISABLE_DISPLAY
 
-void gpu_init(void)
-{
-	BOARD_PrepareVGLiteController();
-
-    if (vg_lite_init(DEFAULT_VG_LITE_TW_WIDTH, DEFAULT_VG_LITE_TW_HEIGHT) != VG_LITE_SUCCESS)
-    {
-        PRINTF("VGLite init error. STOP.");
-        vg_lite_close();
-        while (1)
-            ;
-    }
-
-    if (vg_lite_set_command_buffer_size(VG_LITE_COMMAND_BUFFER_SIZE) != VG_LITE_SUCCESS)
-    {
-        PRINTF("VGLite set command buffer. STOP.");
-        vg_lite_close();
-        while (1)
-            ;
-    }
-}
-
-void lv_port_disp_init(void)
-{
-    lv_display_t* disp = lv_display_create(LVGL_BUFFER_WIDTH, LVGL_BUFFER_HEIGHT);
-    lv_display_set_flush_cb(disp, disp_flush_cb);
-
-    lv_color_format_t color_format = LV_COLOR_FORMAT_XRGB8888;
-
-    static lv_draw_buf_t draw_buf_1;
-    lv_draw_buf_init(&draw_buf_1,
-        LVGL_BUFFER_WIDTH,
-        LVGL_BUFFER_HEIGHT,
-        color_format,
-        LVGL_BUFFER_WIDTH * sizeof(lv_color32_t),
-        s_frameBuffer,
-        sizeof(s_frameBuffer));
-    lv_display_set_draw_buffers(disp, &draw_buf_1, NULL);
-
-    lv_display_set_color_format(disp, color_format);
-    lv_display_set_render_mode(disp, LV_DISPLAY_RENDER_MODE_DIRECT);
-}
-
-#if 0
-void lv_port_disp_init(void)
-{
-    static lv_disp_draw_buf_t disp_buf;
-
-    memset(s_frameBuffer, 0, sizeof(s_frameBuffer));
-#if DEMO_USE_ROTATE
-    memset(s_lvglBuffer, 0, sizeof(s_lvglBuffer));
-    lv_disp_draw_buf_init(&disp_buf, s_lvglBuffer[0], NULL, DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT);
-#else
-    lv_disp_draw_buf_init(&disp_buf, s_frameBuffer[0], s_frameBuffer[1], DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT);
-#endif
-
-    status_t status;
-    dc_fb_info_t fbInfo;
-
-#if LV_USE_GPU_NXP_VG_LITE
-    /* Initialize GPU. */
-    BOARD_PrepareVGLiteController();
-#endif
-
-    /*-------------------------
-     * Initialize your display
-     * -----------------------*/
-    BOARD_PrepareDisplayController();
-
-    status = g_dc.ops->init(&g_dc);
-    if (kStatus_Success != status)
-    {
-        assert(0);
-    }
-
-#if ((LV_COLOR_DEPTH == 8) || (LV_COLOR_DEPTH == 1))
-    DEMO_SetLcdColorPalette();
-#endif
-
-    g_dc.ops->getLayerDefaultConfig(&g_dc, 0, &fbInfo);
-    fbInfo.pixelFormat = DEMO_BUFFER_PIXEL_FORMAT;
-    fbInfo.width       = DEMO_BUFFER_WIDTH;
-    fbInfo.height      = DEMO_BUFFER_HEIGHT;
-    fbInfo.startX      = DEMO_BUFFER_START_X;
-    fbInfo.startY      = DEMO_BUFFER_START_Y;
-    fbInfo.strideBytes = DEMO_BUFFER_STRIDE_BYTE;
-    g_dc.ops->setLayerConfig(&g_dc, 0, &fbInfo);
-
-    g_dc.ops->setCallback(&g_dc, 0, DEMO_BufferSwitchOffCallback, NULL);
-
-#if defined(SDK_OS_FREE_RTOS)
-    s_transferDone = xSemaphoreCreateBinary();
-    if (NULL == s_transferDone)
-    {
-        PRINTF("Frame semaphore create failed\r\n");
-        assert(0);
-    }
-#else
-    s_transferDone = false;
-#endif
-
-#if DEMO_USE_ROTATE
-    /* s_frameBuffer[1] is first shown in the panel, s_frameBuffer[0] is inactive. */
-    s_inactiveFrameBuffer = (void *)s_frameBuffer[0];
-#endif
-
-    /* lvgl starts render in frame buffer 0, so show frame buffer 1 first. */
-    g_dc.ops->setFrameBuffer(&g_dc, 0, (void *)s_frameBuffer[1]);
-
-    /* Wait for frame buffer sent to display controller video memory. */
-    if ((g_dc.ops->getProperty(&g_dc) & kDC_FB_ReserveFrameBuffer) == 0)
-    {
-        DEMO_WaitBufferSwitchOff();
-    }
-
-    g_dc.ops->enableLayer(&g_dc, 0);
-
-    /*-----------------------------------
-     * Register the display in LittlevGL
-     *----------------------------------*/
-
-    static lv_disp_drv_t disp_drv; /*Descriptor of a display driver*/
-    lv_disp_drv_init(&disp_drv);   /*Basic initialization*/
-
-    /*Set up the functions to access to your display*/
-
-    /*Set the resolution of the display*/
-    disp_drv.hor_res = LVGL_BUFFER_WIDTH;
-    disp_drv.ver_res = LVGL_BUFFER_HEIGHT;
-
-    /*Used to copy the buffer's content to the display*/
-    disp_drv.flush_cb = DEMO_FlushDisplay;
-
-#if (LV_USE_GPU_NXP_VG_LITE || LV_USE_GPU_NXP_PXP)
-    disp_drv.clean_dcache_cb = DEMO_CleanInvalidateCache;
-#endif
-
-    /*Set a display buffer*/
-    disp_drv.draw_buf = &disp_buf;
-
-    /* Partial refresh */
-    disp_drv.full_refresh = 1;
-
-    /*Finally register the driver*/
-    lv_disp_drv_register(&disp_drv);
-
-#if LV_USE_GPU_NXP_VG_LITE
-    if (vg_lite_init(DEFAULT_VG_LITE_TW_WIDTH, DEFAULT_VG_LITE_TW_HEIGHT) != VG_LITE_SUCCESS)
-    {
-        PRINTF("VGLite init error. STOP.");
-        vg_lite_close();
-        while (1)
-            ;
-    }
-
-    if (vg_lite_set_command_buffer_size(VG_LITE_COMMAND_BUFFER_SIZE) != VG_LITE_SUCCESS)
-    {
-        PRINTF("VGLite set command buffer. STOP.");
-        vg_lite_close();
-        while (1)
-            ;
-    }
-#endif
-}
-
-static void DEMO_BufferSwitchOffCallback(void *param, void *switchOffBuffer)
+static void DEMO_BufferSwitchOffCallback(void* param, void* switchOffBuffer)
 {
 #if defined(SDK_OS_FREE_RTOS)
     BaseType_t taskAwake = pdFALSE;
@@ -397,30 +223,21 @@ static void DEMO_BufferSwitchOffCallback(void *param, void *switchOffBuffer)
 #endif
 }
 
-#if (LV_USE_GPU_NXP_VG_LITE || LV_USE_GPU_NXP_PXP)
-static void DEMO_CleanInvalidateCache(lv_disp_drv_t *disp_drv)
-{
-    DEMO_FLUSH_DCACHE();
-}
-#endif
-
 static void DEMO_WaitBufferSwitchOff(void)
 {
 #if defined(SDK_OS_FREE_RTOS)
-    if (xSemaphoreTake(s_transferDone, portMAX_DELAY) != pdTRUE)
-    {
+    if (xSemaphoreTake(s_transferDone, portMAX_DELAY) != pdTRUE) {
         PRINTF("Display flush failed\r\n");
         assert(0);
     }
 #else
-    while (false == s_transferDone)
-    {
+    while (false == s_transferDone) {
     }
     s_transferDone = false;
 #endif
 }
 
-static void DEMO_FlushDisplay(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
+static void DEMO_FlushDisplay(lv_display_t* disp, const lv_area_t* area, uint8_t* color_p)
 {
 #if DEMO_USE_ROTATE
 
@@ -435,18 +252,15 @@ static void DEMO_FlushDisplay(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv
     static bool firstFlush = true;
 
     /* Only wait for the first time. */
-    if (firstFlush)
-    {
+    if (firstFlush) {
         firstFlush = false;
-    }
-    else
-    {
+    } else {
         /* Wait frame buffer. */
         DEMO_WaitBufferSwitchOff();
     }
 
     /* Copy buffer. */
-    void *inactiveFrameBuffer = s_inactiveFrameBuffer;
+    void* inactiveFrameBuffer = s_inactiveFrameBuffer;
 
 #if __CORTEX_M == 4
     L1CACHE_CleanInvalidateSystemCacheByRange((uint32_t)s_inactiveFrameBuffer, DEMO_FB_SIZE);
@@ -462,17 +276,14 @@ static void DEMO_FlushDisplay(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv
         .y2 = DEMO_BUFFER_WIDTH - 1,
     };
 
-    lv_gpu_nxp_pxp_blit(((lv_color_t *)inactiveFrameBuffer), &dest_area, DEMO_BUFFER_WIDTH, color_p, area,
-                        lv_area_get_width(area), LV_OPA_COVER, LV_DISP_ROT_270);
+    lv_gpu_nxp_pxp_blit(((lv_color_t*)inactiveFrameBuffer), &dest_area, DEMO_BUFFER_WIDTH, color_p, area,
+        lv_area_get_width(area), LV_OPA_COVER, LV_DISP_ROT_270);
     lv_gpu_nxp_pxp_wait();
 
 #else /* Use CPU to rotate the panel. */
-    for (uint32_t y = 0; y < LVGL_BUFFER_HEIGHT; y++)
-    {
-        for (uint32_t x = 0; x < LVGL_BUFFER_WIDTH; x++)
-        {
-            ((lv_color_t *)inactiveFrameBuffer)[(DEMO_BUFFER_HEIGHT - x) * DEMO_BUFFER_WIDTH + y] =
-                color_p[y * LVGL_BUFFER_WIDTH + x];
+    for (uint32_t y = 0; y < LVGL_BUFFER_HEIGHT; y++) {
+        for (uint32_t x = 0; x < LVGL_BUFFER_WIDTH; x++) {
+            ((lv_color_t*)inactiveFrameBuffer)[(DEMO_BUFFER_HEIGHT - x) * DEMO_BUFFER_WIDTH + y] = color_p[y * LVGL_BUFFER_WIDTH + x];
         }
     }
 #endif
@@ -497,34 +308,127 @@ static void DEMO_FlushDisplay(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv
     SCB_CleanInvalidateDCache_by_Addr(color_p, DEMO_FB_SIZE);
 #endif
 
-    g_dc.ops->setFrameBuffer(&g_dc, 0, (void *)color_p);
+    g_dc.ops->setFrameBuffer(&g_dc, 0, (void*)color_p);
 
     DEMO_WaitBufferSwitchOff();
 
     /* IMPORTANT!!!
      * Inform the graphics library that you are ready with the flushing*/
-    lv_disp_flush_ready(disp_drv);
+    lv_display_flush_ready(disp);
 #endif /* DEMO_USE_ROTATE */
 }
 #endif
 
-void lv_port_indev_init(void)
+static void disp_flush_cb(lv_display_t* disp, const lv_area_t* area, uint8_t* color_p)
 {
-#if 0
-    static lv_indev_drv_t indev_drv;
+#ifndef DISABLE_DISPLAY
+    DEMO_FlushDisplay(disp, area, color_p);
+#else
+    lv_display_flush_ready(disp);
+#endif
+}
 
-    /*------------------
-     * Touchpad
-     * -----------------*/
+void gpu_init(void)
+{
+    BOARD_PrepareVGLiteController();
 
-    /*Initialize your touchpad */
-    DEMO_InitTouch();
+    if (vg_lite_init(DEFAULT_VG_LITE_TW_WIDTH, DEFAULT_VG_LITE_TW_HEIGHT) != VG_LITE_SUCCESS) {
+        PRINTF("VGLite init error. STOP.");
+        vg_lite_close();
+        while (1)
+            ;
+    }
 
-    /*Register a touchpad input device*/
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type    = LV_INDEV_TYPE_POINTER;
-    indev_drv.read_cb = DEMO_ReadTouch;
-    lv_indev_drv_register(&indev_drv);
+    if (vg_lite_set_command_buffer_size(VG_LITE_COMMAND_BUFFER_SIZE) != VG_LITE_SUCCESS) {
+        PRINTF("VGLite set command buffer. STOP.");
+        vg_lite_close();
+        while (1)
+            ;
+    }
+}
+
+void lv_port_disp_init(void)
+{
+    lv_display_t* disp = lv_display_create(LVGL_BUFFER_WIDTH, LVGL_BUFFER_HEIGHT);
+    lv_display_set_flush_cb(disp, disp_flush_cb);
+
+    lv_color_format_t color_format = DEMO_USE_XRGB8888 ? LV_COLOR_FORMAT_XRGB8888 : LV_COLOR_FORMAT_RGB565;
+
+    static lv_draw_buf_t draw_buf_1;
+    lv_draw_buf_init(&draw_buf_1,
+        LVGL_BUFFER_WIDTH,
+        LVGL_BUFFER_HEIGHT,
+        color_format,
+        LVGL_BUFFER_WIDTH * DEMO_BUFFER_BYTE_PER_PIXEL,
+        s_frameBuffer[0],
+        sizeof(s_frameBuffer[0]));
+
+    static lv_draw_buf_t draw_buf_2;
+    lv_draw_buf_init(&draw_buf_2,
+        LVGL_BUFFER_WIDTH,
+        LVGL_BUFFER_HEIGHT,
+        color_format,
+        LVGL_BUFFER_WIDTH * DEMO_BUFFER_BYTE_PER_PIXEL,
+        s_frameBuffer[1],
+        sizeof(s_frameBuffer[1]));
+
+    lv_display_set_draw_buffers(disp, &draw_buf_1, &draw_buf_2);
+    lv_display_set_color_format(disp, color_format);
+    lv_display_set_render_mode(disp, LV_DISPLAY_RENDER_MODE_DIRECT);
+
+#ifndef DISABLE_DISPLAY
+    status_t status;
+    dc_fb_info_t fbInfo;
+
+    /*-------------------------
+     * Initialize your display
+     * -----------------------*/
+    BOARD_PrepareDisplayController();
+
+    status = g_dc.ops->init(&g_dc);
+    if (kStatus_Success != status) {
+        assert(0);
+    }
+
+#if ((LV_COLOR_DEPTH == 8) || (LV_COLOR_DEPTH == 1))
+    DEMO_SetLcdColorPalette();
+#endif
+
+    g_dc.ops->getLayerDefaultConfig(&g_dc, 0, &fbInfo);
+    fbInfo.pixelFormat = DEMO_BUFFER_PIXEL_FORMAT;
+    fbInfo.width = DEMO_BUFFER_WIDTH;
+    fbInfo.height = DEMO_BUFFER_HEIGHT;
+    fbInfo.startX = DEMO_BUFFER_START_X;
+    fbInfo.startY = DEMO_BUFFER_START_Y;
+    fbInfo.strideBytes = DEMO_BUFFER_STRIDE_BYTE;
+    g_dc.ops->setLayerConfig(&g_dc, 0, &fbInfo);
+
+    g_dc.ops->setCallback(&g_dc, 0, DEMO_BufferSwitchOffCallback, NULL);
+
+#if defined(SDK_OS_FREE_RTOS)
+    s_transferDone = xSemaphoreCreateBinary();
+    if (NULL == s_transferDone) {
+        PRINTF("Frame semaphore create failed\r\n");
+        assert(0);
+    }
+#else
+    s_transferDone = false;
+#endif
+
+#if DEMO_USE_ROTATE
+    /* s_frameBuffer[1] is first shown in the panel, s_frameBuffer[0] is inactive. */
+    s_inactiveFrameBuffer = (void*)s_frameBuffer[0];
+#endif
+
+    /* lvgl starts render in frame buffer 0, so show frame buffer 1 first. */
+    g_dc.ops->setFrameBuffer(&g_dc, 0, (void*)s_frameBuffer[1]);
+
+    /* Wait for frame buffer sent to display controller video memory. */
+    if ((g_dc.ops->getProperty(&g_dc) & kDC_FB_ReserveFrameBuffer) == 0) {
+        DEMO_WaitBufferSwitchOff();
+    }
+
+    g_dc.ops->enableLayer(&g_dc, 0);
 #endif
 }
 
@@ -573,12 +477,11 @@ static void DEMO_InitTouch(void)
     GT911_GetResolution(&s_touchHandle, &s_touchResolutionX, &s_touchResolutionY);
 }
 
-#if 0
+#ifndef DISABLE_DISPLAY
 
 /* Will be called by the library to read the touchpad */
-static void DEMO_ReadTouch(lv_indev_drv_t* drv, lv_indev_data_t* data)
+static void DEMO_ReadTouch(lv_indev_t* indev, lv_indev_data_t* data)
 {
-    
     static int touch_x = 0;
     static int touch_y = 0;
 
@@ -599,6 +502,24 @@ static void DEMO_ReadTouch(lv_indev_drv_t* drv, lv_indev_data_t* data)
 }
 
 #endif
+
+void lv_port_indev_init(void)
+{
+#ifndef DISABLE_DISPLAY
+    lv_indev_t* indev = lv_indev_create();
+
+    /*------------------
+     * Touchpad
+     * -----------------*/
+
+    /*Initialize your touchpad */
+    DEMO_InitTouch();
+
+    /*Register a touchpad input device*/
+    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_read_cb(indev, DEMO_ReadTouch);
+#endif
+}
 
 #include "core_cm7.h"
 #include <stdio.h>
@@ -627,10 +548,9 @@ static uint64_t tick_get_cb(void)
     uint64_t elaps;
 
     /*If there is no overflow in sys_time simple subtract*/
-    if(act_time >= prev_tick) {
+    if (act_time >= prev_tick) {
         elaps = act_time - prev_tick;
-    }
-    else {
+    } else {
         elaps = UINT32_MAX - prev_tick + 1;
         elaps += act_time;
     }
@@ -640,7 +560,7 @@ static uint64_t tick_get_cb(void)
     return cur_tick_ns;
 }
 
-static void profiler_flush_cb(const char * buf)
+static void profiler_flush_cb(const char* buf)
 {
     printf("%s", buf);
 }
@@ -661,4 +581,3 @@ void lv_port_profiler_init(void)
     lv_profiler_builtin_init(&config);
 #endif
 }
-
