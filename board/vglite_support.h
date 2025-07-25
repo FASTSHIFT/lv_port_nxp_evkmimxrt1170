@@ -24,8 +24,8 @@ extern "C" {
 #define VG_LITE_COMMAND_BUFFER_SIZE (256 << 10) /* 256 KB */
 
 /* Default tessellation window width and height, in pixels */
-#define DEFAULT_VG_LITE_TW_WIDTH  480 /* pixels */
-#define DEFAULT_VG_LITE_TW_HEIGHT 480 /* pixels */
+#define DEFAULT_VG_LITE_TW_WIDTH  256 /* pixels */
+#define DEFAULT_VG_LITE_TW_HEIGHT 256 /* pixels */
 
 status_t BOARD_PrepareVGLiteController(void);
 

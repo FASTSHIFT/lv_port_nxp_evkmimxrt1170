@@ -31,6 +31,7 @@ void lv_port_pre_init(void);
 void lv_port_disp_init(void);
 void lv_port_indev_init(void);
 void lv_port_profiler_init(void);
+void lv_port_draw_buf_init(void);
 
 #if defined(__cplusplus)
 }

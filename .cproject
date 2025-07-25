@@ -325,7 +325,7 @@
 								<option id="com.crt.advproject.link.ecrp.551972988" name="Enhanced CRP" superClass="com.crt.advproject.link.ecrp"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.25059076" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.scanf.1956689322" name="Enable scanf float " superClass="com.crt.advproject.link.gcc.nanofloat.scanf"/>
-								<option id="com.crt.advproject.link.toram.1245095334" name="Link application to RAM" superClass="com.crt.advproject.link.toram"/>
+								<option id="com.crt.advproject.link.toram.1245095334" name="Link application to RAM" superClass="com.crt.advproject.link.toram" value="false" valueType="boolean"/>
 								<option id="com.crt.advproject.link.stackOffset.1107836017" name="Stack offset" superClass="com.crt.advproject.link.stackOffset"/>
 								<option id="com.crt.advproject.link.gcc.multicore.empty.1256635840" name="No Multicore options for this project" superClass="com.crt.advproject.link.gcc.multicore.empty"/>
 								<option id="com.crt.advproject.link.config.232489758" name="Obsolete (Config)" superClass="com.crt.advproject.link.config"/>
@@ -637,7 +637,7 @@
 							</tool>
 							<tool id="com.crt.advproject.link.exe.release.1085211323" name="MCU Linker" superClass="com.crt.advproject.link.exe.release">
 								<option id="com.crt.advproject.link.thumb.1292872451" name="Thumb mode" superClass="com.crt.advproject.link.thumb" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.memory.load.image.812091100" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image" value="false;" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.load.image.812091100" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image" value="false;BOARD_SDRAM" valueType="string"/>
 								<option defaultValue="com.crt.advproject.heapAndStack.mcuXpressoStyle" id="com.crt.advproject.link.memory.heapAndStack.style.1839794184" name="Heap and Stack placement" superClass="com.crt.advproject.link.memory.heapAndStack.style" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.memory.heapAndStack.277384742" name="Heap and Stack options" superClass="com.crt.advproject.link.memory.heapAndStack" value="&amp;Heap:Default;Post Data;Default&amp;Stack:Default;End;Default" valueType="string"/>
 								<option id="com.crt.advproject.link.memory.data.968029721" name="Global data placement" superClass="com.crt.advproject.link.memory.data" value="Default" valueType="string"/>
@@ -686,7 +686,7 @@
 								<option id="com.crt.advproject.link.gcc.hdrlib.891718664" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.826423636" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.scanf.2071267999" name="Enable scanf float " superClass="com.crt.advproject.link.gcc.nanofloat.scanf"/>
-								<option id="com.crt.advproject.link.toram.1099570781" name="Link application to RAM" superClass="com.crt.advproject.link.toram"/>
+								<option id="com.crt.advproject.link.toram.1099570781" name="Link application to RAM" superClass="com.crt.advproject.link.toram" value="false" valueType="boolean"/>
 								<option id="com.crt.advproject.link.stackOffset.1073512055" name="Stack offset" superClass="com.crt.advproject.link.stackOffset"/>
 								<option id="com.crt.advproject.link.gcc.multicore.master.1655045749" name="Multicore master" superClass="com.crt.advproject.link.gcc.multicore.master"/>
 								<option id="com.crt.advproject.link.gcc.multicore.empty.1086763686" name="No Multicore options for this project" superClass="com.crt.advproject.link.gcc.multicore.empty"/>

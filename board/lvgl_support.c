@@ -562,6 +562,11 @@ static uint64_t tick_get_cb(void)
     return cur_tick_ns;
 }
 
+static int tid_get_cb(void)
+{
+    return (int)xTaskGetCurrentTaskHandle();
+}
+
 static void profiler_flush_cb(const char* buf)
 {
     printf("%s", buf);
@@ -579,7 +584,39 @@ void lv_port_profiler_init(void)
     lv_profiler_builtin_config_init(&config);
     config.tick_per_sec = 1000000000; /* 1 sec = 1000000000 nsec */
     config.tick_get_cb = tick_get_cb;
+    config.tid_get_cb = tid_get_cb;
     config.flush_cb = profiler_flush_cb;
     lv_profiler_builtin_init(&config);
 #endif
+}
+
+#include "lvgl/src/stdlib/builtin/lv_tlsf.h"
+#include "lvgl/src/draw/lv_draw_buf_private.h"
+
+static lv_tlsf_t image_tlsf;
+
+static void * buf_malloc_cb(size_t size, lv_color_format_t color_format)
+{
+    return lv_tlsf_malloc(image_tlsf, size + LV_DRAW_BUF_ALIGN - 1);
+}
+
+static void buf_free_cb(void * draw_buf)
+{
+    lv_tlsf_free(image_tlsf, draw_buf);
+}
+
+static void init_handlers(lv_draw_buf_handlers_t * handlers)
+{
+    handlers->buf_malloc_cb = buf_malloc_cb;
+    handlers->buf_free_cb = buf_free_cb;
+}
+
+void lv_port_draw_buf_init(void)
+{
+    static uint32_t buf[2 * 1024 * 1024 / sizeof(uint32_t)];
+    image_tlsf = lv_tlsf_create_with_pool(buf, sizeof(buf));
+
+    init_handlers(lv_draw_buf_get_handlers());
+    init_handlers(lv_draw_buf_get_font_handlers());
+    init_handlers(lv_draw_buf_get_image_handlers());
 }

@@ -35,6 +35,13 @@ static uint32_t millis(void)
     return xTaskGetTickCount() * portTICK_PERIOD_MS;
 }
 
+static void profiler_timer_cb(lv_timer_t *timer)
+{
+#if LV_USE_PROFILER
+    lv_profiler_builtin_set_enable(true);
+#endif
+}
+
 static void AppTask(void *param)
 {
     PRINTF("lvgl benchmark demo started\r\n");
@@ -45,17 +52,17 @@ static void AppTask(void *param)
 //    lv_log_register_print_cb(print_cb);
 #endif
 
+    lv_port_draw_buf_init();
     lv_tick_set_cb(millis);
     lv_port_disp_init();
     lv_port_indev_init();
     lv_port_profiler_init();
 
     lv_demo_widgets();
-    // lv_demo_benchmark();
+//    lv_demo_benchmark();
 
-    // lv_obj_t* obj = lv_obj_create(lv_scr_act());
-    // lv_obj_set_style_radius(obj, LV_RADIUS_CIRCLE, 0);
-    // lv_obj_center(obj);
+    // lv_timer_t *timer = lv_timer_create(profiler_timer_cb, 2000, NULL);
+    // lv_timer_set_repeat_count(timer, 1);
 
     for (;;)
     {
