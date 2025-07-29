@@ -61,8 +61,8 @@ static void AppTask(void *param)
     lv_demo_widgets();
 //    lv_demo_benchmark();
 
-    // lv_timer_t *timer = lv_timer_create(profiler_timer_cb, 2000, NULL);
-    // lv_timer_set_repeat_count(timer, 1);
+    lv_timer_t *timer = lv_timer_create(profiler_timer_cb, 2000, NULL);
+    lv_timer_set_repeat_count(timer, 1);
 
     for (;;)
     {
@@ -82,6 +82,7 @@ int main(void)
     BaseType_t stat;
 
     /* Init board hardware. */
+
     BOARD_ConfigMPU();
     BOARD_BootClockRUN();
 
@@ -95,6 +96,8 @@ int main(void)
     BOARD_InitLpuartPins();
 #ifndef DISABLE_DISPLAY
     BOARD_InitMipiPanelPins();
+#endif
+#ifndef DISABLE_TOUCH
     BOARD_MIPIPanelTouch_I2C_Init();
 #endif
     BOARD_InitDebugConsole();

@@ -479,7 +479,7 @@ static void DEMO_InitTouch(void)
     GT911_GetResolution(&s_touchHandle, &s_touchResolutionX, &s_touchResolutionY);
 }
 
-#ifndef DISABLE_DISPLAY
+#ifndef DISABLE_TOUCH
 
 /* Will be called by the library to read the touchpad */
 static void DEMO_ReadTouch(lv_indev_t* indev, lv_indev_data_t* data)
@@ -507,7 +507,7 @@ static void DEMO_ReadTouch(lv_indev_t* indev, lv_indev_data_t* data)
 
 void lv_port_indev_init(void)
 {
-#ifndef DISABLE_DISPLAY
+#ifndef DISABLE_TOUCH
     lv_indev_t* indev = lv_indev_create();
 
     /*------------------
