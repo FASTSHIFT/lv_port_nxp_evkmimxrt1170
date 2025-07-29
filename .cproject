@@ -637,7 +637,7 @@
 							</tool>
 							<tool id="com.crt.advproject.link.exe.release.1085211323" name="MCU Linker" superClass="com.crt.advproject.link.exe.release">
 								<option id="com.crt.advproject.link.thumb.1292872451" name="Thumb mode" superClass="com.crt.advproject.link.thumb" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.memory.load.image.812091100" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image" value="false;BOARD_SDRAM" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.load.image.812091100" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image" value="false;SRAM_OC1" valueType="string"/>
 								<option defaultValue="com.crt.advproject.heapAndStack.mcuXpressoStyle" id="com.crt.advproject.link.memory.heapAndStack.style.1839794184" name="Heap and Stack placement" superClass="com.crt.advproject.link.memory.heapAndStack.style" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.memory.heapAndStack.277384742" name="Heap and Stack options" superClass="com.crt.advproject.link.memory.heapAndStack" value="&amp;Heap:Default;Post Data;Default&amp;Stack:Default;End;Default" valueType="string"/>
 								<option id="com.crt.advproject.link.memory.data.968029721" name="Global data placement" superClass="com.crt.advproject.link.memory.data" value="Default" valueType="string"/>
@@ -684,9 +684,9 @@
 								<option id="com.crt.advproject.link.flashconfigenable.1132282740" name="Enable automatic placement of Flash Configuration field in image" superClass="com.crt.advproject.link.flashconfigenable" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.link.ecrp.472401819" name="Enhanced CRP" superClass="com.crt.advproject.link.ecrp"/>
 								<option id="com.crt.advproject.link.gcc.hdrlib.891718664" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
-								<option id="com.crt.advproject.link.gcc.nanofloat.826423636" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.link.gcc.nanofloat.826423636" name="Enable printf float " superClass="com.crt.advproject.link.gcc.nanofloat" value="false" valueType="boolean"/>
 								<option id="com.crt.advproject.link.gcc.nanofloat.scanf.2071267999" name="Enable scanf float " superClass="com.crt.advproject.link.gcc.nanofloat.scanf"/>
-								<option id="com.crt.advproject.link.toram.1099570781" name="Link application to RAM" superClass="com.crt.advproject.link.toram" value="false" valueType="boolean"/>
+								<option id="com.crt.advproject.link.toram.1099570781" name="Link application to RAM" superClass="com.crt.advproject.link.toram" value="true" valueType="boolean"/>
 								<option id="com.crt.advproject.link.stackOffset.1073512055" name="Stack offset" superClass="com.crt.advproject.link.stackOffset"/>
 								<option id="com.crt.advproject.link.gcc.multicore.master.1655045749" name="Multicore master" superClass="com.crt.advproject.link.gcc.multicore.master"/>
 								<option id="com.crt.advproject.link.gcc.multicore.empty.1086763686" name="No Multicore options for this project" superClass="com.crt.advproject.link.gcc.multicore.empty"/>
@@ -711,6 +711,18 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.crt.advproject.config.exe.release.861148510.1709589941" name="lvgl_demo_main.c" rcbsApplicability="disable" resourcePath="source/lvgl_demo_main.c" toolsToInvoke="com.crt.advproject.gcc.exe.release.1174344864.2112427392">
+						<tool id="com.crt.advproject.gcc.exe.release.1174344864.2112427392" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.release.1174344864">
+							<option id="gnu.c.compiler.option.dialect.flags.1695347503" name="Other dialect flags" superClass="gnu.c.compiler.option.dialect.flags" value="-DGCID_REV_CID=gc355/0x0_1216 -DDEMO_CleanInvalidateCacheByAddr=SCB_CleanInvalidateDCache_by_Addr" valueType="string"/>
+							<inputType id="com.crt.advproject.compiler.input.760042664" superClass="com.crt.advproject.compiler.input"/>
+						</tool>
+						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.978778774" name="Resource Custom Build Step">
+							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.361913201" name="Resource Custom Build Step Input Type">
+								<additionalInput kind="additionalinputdependency" paths=""/>
+							</inputType>
+							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.1767689582" name="Resource Custom Build Step Output Type"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="CMSIS"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="board"/>
@@ -773,13 +785,13 @@
 &lt;vendor&gt;NXP&lt;/vendor&gt;
 &lt;memory can_program="true" id="Flash" is_ro="true" size="0" type="Flash"/&gt;
 &lt;memory id="RAM" size="2048" type="RAM"/&gt;
+&lt;memoryInstance derived_from="Flash" edited="true" id="SRAM_ITC_cm7" location="0x0" size="0x40000"/&gt;
+&lt;memoryInstance derived_from="Flash" edited="true" id="SRAM_OC1" location="0x20240000" size="0x80000"/&gt;
+&lt;memoryInstance derived_from="Flash" edited="true" id="SRAM_OC2" location="0x202c0000" size="0x80000"/&gt;
 &lt;memoryInstance derived_from="Flash" driver="MIMXRT1170_SFDP_QSPI.cfx" edited="true" id="BOARD_FLASH" location="0x30000000" size="0x1000000"/&gt;
 &lt;memoryInstance derived_from="RAM" edited="true" id="BOARD_SDRAM" location="0x80000000" size="0x3000000"/&gt;
 &lt;memoryInstance derived_from="RAM" edited="true" id="NCACHE_REGION" location="0x83000000" size="0x1000000"/&gt;
 &lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_DTC_cm7" location="0x20000000" size="0x40000"/&gt;
-&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_ITC_cm7" location="0x0" size="0x40000"/&gt;
-&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_OC1" location="0x20240000" size="0x80000"/&gt;
-&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_OC2" location="0x202c0000" size="0x80000"/&gt;
 &lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_OC_ECC1" location="0x20340000" size="0x10000"/&gt;
 &lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_OC_ECC2" location="0x20350000" size="0x10000"/&gt;
 &lt;/chip&gt;
