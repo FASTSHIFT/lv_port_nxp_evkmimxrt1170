@@ -123,10 +123,10 @@ extern void traceTaskSwitchedIn(void);
 // #define traceTASK_SWITCHED_IN()  traceTaskSwitchedIn()
 // #define traceTASK_SWITCHED_OUT() traceTaskSwitchedOut()
 
-// void lv_freertos_task_switch_in(const char * name);
-// void lv_freertos_task_switch_out(void);
-// #define traceTASK_SWITCHED_IN()  lv_freertos_task_switch_in(pxCurrentTCB->pcTaskName)
-// #define traceTASK_SWITCHED_OUT() lv_freertos_task_switch_out()
+void lv_freertos_task_switch_in(const char * name);
+void lv_freertos_task_switch_out(void);
+#define traceTASK_SWITCHED_IN()  lv_freertos_task_switch_in(pxCurrentTCB->pcTaskName)
+#define traceTASK_SWITCHED_OUT() lv_freertos_task_switch_out()
 
 #if defined(__ICCARM__)||defined(__CC_ARM)||defined(__GNUC__)
     /* in Kinetis SDK, this contains the system core clock frequency */

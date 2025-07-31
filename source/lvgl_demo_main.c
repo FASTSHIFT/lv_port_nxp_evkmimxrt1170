@@ -58,10 +58,10 @@ static void AppTask(void *param)
     lv_port_indev_init();
     lv_port_profiler_init();
 
-    lv_demo_widgets();
-//    lv_demo_benchmark();
+//    lv_demo_widgets();
+    lv_demo_benchmark();
 
-    lv_timer_t *timer = lv_timer_create(profiler_timer_cb, 2000, NULL);
+    lv_timer_t *timer = lv_timer_create(profiler_timer_cb, 5000, NULL);
     lv_timer_set_repeat_count(timer, 1);
 
     for (;;)
@@ -70,6 +70,53 @@ static void AppTask(void *param)
         vTaskDelay(idle);
     }
 }
+
+#if LV_USE_OS == LV_OS_NONE
+
+static uint32_t freertos_task_switch_timestamp = 0;
+static uint32_t freertos_idle_task_running = 0;
+static uint32_t freertos_non_idle_time_sum = 0;
+static uint32_t freertos_idle_time_sum = 0;
+
+void lv_freertos_task_switch_in(const char * name)
+{
+    if(lv_strcmp(name, "IDLE")) freertos_idle_task_running = false;
+    else freertos_idle_task_running = true;
+
+    freertos_task_switch_timestamp = lv_tick_get();
+}
+
+void lv_freertos_task_switch_out(void)
+{
+    uint32_t elaps = lv_tick_elaps(freertos_task_switch_timestamp);
+    if(freertos_idle_task_running) freertos_idle_time_sum += elaps;
+    else freertos_non_idle_time_sum += elaps;
+}
+
+uint32_t freertos_get_idle_percent(void)
+{
+    if(freertos_non_idle_time_sum + freertos_idle_time_sum == 0) {
+        LV_LOG_WARN("Not enough time elapsed to provide idle percentage");
+        return 0;
+    }
+
+    uint32_t pct = (freertos_idle_time_sum * 100) / (freertos_idle_time_sum +
+                                                              freertos_non_idle_time_sum);
+
+    freertos_non_idle_time_sum = 0;
+    freertos_idle_time_sum = 0;
+
+    return pct;
+}
+
+#else
+
+uint32_t freertos_get_idle_percent(void)
+{
+    return lv_os_get_idle_percent();
+}
+
+#endif
 
 /*******************************************************************************
  * Code
