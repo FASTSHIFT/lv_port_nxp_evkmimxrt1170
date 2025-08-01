@@ -75,6 +75,7 @@
 
 #define DEMO_FB_SIZE \
     (((DEMO_BUFFER_WIDTH * DEMO_BUFFER_HEIGHT * LCD_FB_BYTE_PER_PIXEL) + DEMO_FB_ALIGN - 1) & ~(DEMO_FB_ALIGN - 1))
+#define DEMO_FB_USE_NONCACHEABLE_SECTION
 
 #if DEMO_USE_ROTATE
 #define LVGL_BUFFER_WIDTH DEMO_BUFFER_HEIGHT
@@ -109,7 +110,12 @@ static void DEMO_SetLcdColorPalette(void);
 /*******************************************************************************
  * Variables
  ******************************************************************************/
+#ifdef DEMO_FB_USE_NONCACHEABLE_SECTION
+AT_NONCACHEABLE_SECTION_ALIGN(static uint8_t s_frameBuffer[2][DEMO_FB_SIZE], DEMO_FB_ALIGN);
+#else
 SDK_ALIGN(static uint8_t s_frameBuffer[2][DEMO_FB_SIZE], DEMO_FB_ALIGN);
+#endif
+
 #if DEMO_USE_ROTATE
 SDK_ALIGN(static uint8_t s_lvglBuffer[1][DEMO_FB_SIZE], DEMO_FB_ALIGN);
 #endif
@@ -302,10 +308,14 @@ static void DEMO_FlushDisplay(lv_display_t* disp, const lv_area_t* area, uint8_t
 
 #else /* DEMO_USE_ROTATE */
 
+#ifndef DEMO_FB_USE_NONCACHEABLE_SECTION
+    LV_PROFILER_BEGIN_TAG("SCB_CleanInvalidateDCache_by_Addr");
 #if __CORTEX_M == 4
     L1CACHE_CleanInvalidateSystemCacheByRange((uint32_t)color_p, DEMO_FB_SIZE);
 #else
     SCB_CleanInvalidateDCache_by_Addr(color_p, DEMO_FB_SIZE);
+#endif
+    LV_PROFILER_END_TAG("SCB_CleanInvalidateDCache_by_Addr");
 #endif
 
     g_dc.ops->setFrameBuffer(&g_dc, 0, (void*)color_p);
